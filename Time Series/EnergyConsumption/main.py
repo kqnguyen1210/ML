@@ -75,3 +75,15 @@ X_train = train[feature_cols]
 X_test = test[feature_cols]
 y_train = train["Consumption"]
 y_test = test["Consumption"]
+
+lr_model = LinearRegression()
+lr_model.fit(X_train, y_train)
+lr_preds = lr_model.predict(X_test)
+lr_mae = mean_absolute_error(y_test, lr_preds)
+lr_rmse = np.sqrt(mean_squared_error(y_test, lr_preds))
+
+rf_model = RandomForestRegressor(n_estimators=500, max_depth=100, random_state=52)
+rf_model.fit(X_train, y_train)
+rf_preds = rf_model.predict(X_test)
+rf_mae = mean_absolute_error(y_test, rf_preds)
+rf_rmse = np.sqrt(mean_squared_error(y_test, rf_preds))
