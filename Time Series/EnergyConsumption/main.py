@@ -67,3 +67,11 @@ test = df[split_index:]
 
 print(f"Train: {train['Date'].min()} to {train['Date'].max()}")
 print(f"Test: {test['Date'].min()} to {test['Date'].max()}")
+
+# model fitting and predictions
+feature_cols = ["IsWeekend", "Lag_1", "Lag_7", "Season", "MA_7", "MA_30"]
+
+X_train = train[feature_cols]
+X_test = test[feature_cols]
+y_train = train["Consumption"]
+y_test = test["Consumption"]
