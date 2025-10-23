@@ -47,13 +47,13 @@ def get_seasons(month):
     summer_months = [6, 7, 8]
     fall_months = [9, 10, 11]
     if month in winter_months:
-        return "Winter"
+        return 4
     elif month in spring_months:
-        return "Spring"
+        return 1
     elif month in summer_months:
-        return "Summer"
+        return 2
     elif month in fall_months:
-        return "Fall"
+        return 3
     else:
         return ""
 
@@ -98,3 +98,41 @@ sarima_pred = sarima_fit.forecast(steps=len(test))
 
 sarima_mae = mean_absolute_error(y_test, sarima_pred)
 sarima_rmse = mean_squared_error(y_test, sarima_pred)
+
+# Visualization
+plt.figure(figsize=(14, 7))
+plt.plot(test.index, y_test, label="Actual", color="blue", linewidth=2)
+plt.plot(test.index, lr_preds, label="Linear Regression", linestyle="--")
+plt.plot(test.index, rf_preds, label="Random Forest", linestyle="--")
+plt.plot(test.index, sarima_pred, label="SARIMA", linestyle="--")
+plt.xlabel("Date")
+plt.ylabel("Consumption")
+plt.legend()
+plt.show()
+
+# Comparison table
+results = pd.DataFrame(
+    {
+        "Model": ["LinearRegression", "RandomForestRegressor", "Sarima"],
+        "MAE": [lr_mae, rf_mae, sarima_mae],
+        "RMSE": [lr_rmse, rf_rmse, sarima_rmse],
+    }
+)
+
+print(results)
+print(f"\nBest model: {results.loc[results['MAE'].idxmin(), 'Model']}")
+
+# feature importance
+importance = rf_model.feature_importances_
+feature_importance_df = pd.DataFrame(
+    {"Feature": feature_cols, "Importance": importance}
+).sort_values(by="Importance", ascending=False)
+
+print(feature_importance_df)
+
+plt.figure(figsize=(10, 6))
+plt.barh(feature_importance_df["Feature"], feature_importance_df["Importance"])
+plt.xlabel("Importance")
+plt.title("Top Feature Importances")
+plt.gca().invert_yaxis()
+plt.show()
