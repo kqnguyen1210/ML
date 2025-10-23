@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 # data loading
 url = "https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv"
@@ -87,3 +88,13 @@ rf_model.fit(X_train, y_train)
 rf_preds = rf_model.predict(X_test)
 rf_mae = mean_absolute_error(y_test, rf_preds)
 rf_rmse = np.sqrt(mean_squared_error(y_test, rf_preds))
+
+train_target = train.set_index("Date")["Consumption"]
+
+sarima_model = SARIMAX(train_target, order=(1, 1, 1), seasonal_order=(1, 1, 1, 7))
+sarima_fit = sarima_model.fit()
+
+sarima_pred = sarima_fit.forecast(steps=len(test))
+
+sarima_mae = mean_absolute_error(y_test, sarima_pred)
+sarima_rmse = mean_squared_error(y_test, sarima_pred)
